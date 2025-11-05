@@ -5,7 +5,7 @@ export const authorizeRoles =
   (...allowedRoles: string[]) =>
   (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
-      res.status(401).json({ message: "Unauthorized - User not authenticated" });
+      res.status(401).json({ message: "Unauthorized - No user found" });
       return;
     }
 
