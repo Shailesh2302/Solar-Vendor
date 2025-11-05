@@ -2,12 +2,11 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import db from "./config/prisma"
-import leadRouter from "./routes/leadRoute"
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(express.json());
@@ -16,9 +15,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
-
-//Lead route
-app.use("/leads", leadRouter);
 
 // Start server
 app.listen(PORT, () => {

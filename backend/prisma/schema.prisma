@@ -16,7 +16,7 @@ model User {
   email         String         @unique
   password      String
   leads         Lead[]
-  role          Roles          @default(EMPLOYEES)
+  role          Roles
   isApproved    Boolean        @default(false)
   refreshTokens RefreshToken[]
   createdAt     DateTime       @default(now())
@@ -40,7 +40,7 @@ model RefreshToken {
 
 // Lead Schema 
 model Lead {
-  id          String             @id @default(ulid())
+  id          Int             @id @default(autoincrement())
   name        String
   phone       String
   address     String?
@@ -52,7 +52,7 @@ model Lead {
   createdBy   User            @relation(fields: [createdById], references: [id])
   createdById String
   invoiceNo   InvoiceCounter? @relation(fields: [invoiceNoId], references: [id])
-  invoiceNoId String?
+  invoiceNoId Int?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
@@ -67,7 +67,7 @@ enum Status {
 }
 
 model InvoiceCounter {
-  id    String    @id @default(ulid())
+  id    Int    @id @default(autoincrement())
   name  String
   count Int?
   leads Lead[]
