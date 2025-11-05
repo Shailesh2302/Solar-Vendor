@@ -15,6 +15,5 @@ export const authorizeRoles =
       });
       return;
     }
-
     next();
   };
