@@ -9,7 +9,7 @@ export const authorizeRoles =
       return;
     }
 
-    if (!allowedRoles.includes(req.user.role)) {
+    if (!allowedRoles.includes(req.user.role) && req.user.isApproved === true) {
       res.status(403).json({
         message: "Forbidden - You do not have permission to access this route",
       });

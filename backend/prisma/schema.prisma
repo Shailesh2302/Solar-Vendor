@@ -20,6 +20,7 @@ model User {
   email         String         @unique
   password      String
   leads         Lead[]
+  AssignedLeads    Lead[] @relation("AssignedLeads")
   role          Roles
   isApproved    Boolean        @default(false)
   refreshTokens RefreshToken[]
@@ -59,11 +60,10 @@ model Lead {
   structure   String
   createdBy   User            @relation(fields: [createdById], references: [id])
   createdById String
-  invoiceNo   InvoiceCounter? @relation(fields: [invoiceNoId], references: [id])
-  invoiceNoId Int?
+  assigned    User?            @relation("AssignedLeads", fields: [assignedTo], references: [id])
+  assignedTo  String?
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
-
   @@map("lead")
 }
 
@@ -74,13 +74,6 @@ enum Status {
   deal
   lost
   installation
+  archived
 }
 
-model InvoiceCounter {
-  id    Int    @id @default(autoincrement())
-  name  String
-  count Int?
-  leads Lead[]
-
-  @@map("invoiceCounter")
-}
