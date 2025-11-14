@@ -1,4 +1,4 @@
-import {type Request,type Response } from "express";
+import { type Request, type Response } from "express";
 import bcrypt from "bcrypt";
 import { prisma } from "../config/prisma.js";
 import {
@@ -9,41 +9,68 @@ import {
 import { addDays } from "date-fns";
 
 export const login = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  
+  try {
+    const { email, password } = await req.body;
+    console.log(email, password);
 
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user || !(await bcrypt.compare(password, user.password))) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
 
-  const accessToken = generateAccessToken({ userId: user.id, role: user.role });
-  const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
+    const accessToken = generateAccessToken({ userId: user.id, role: user.role });
+    const refreshToken = generateRefreshToken({ userId: user.id, role: user.role });
 
 
-  await prisma.refreshToken.create({
-    data: {
-      token: refreshToken,
-      userId: user.id,
-      expiresAt: addDays(new Date(), 7), 
-    },
-  });
-
-  res
-    .cookie("jwt", accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    })
-    .cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    })
-    .json({
-      message: "Login successful",
-      user: { id: user.id, email: user.email, role: user.role },
+    await prisma.refreshToken.create({
+      data: {
+        token: refreshToken,
+        userId: user.id,
+        expiresAt: addDays(new Date(), 7),
+      },
     });
+
+    res
+      .cookie("jwt", accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      })
+      .cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+      })
+      .json({
+        message: "Login successful",
+        user: { id: user.id, email: user.email, role: user.role },
+      });
+  } catch (error) {
+    console.log(error);
+    
+    res.status(401).json({ message: "Internal Server Error" });
+
+  }
 };
+
+// export const login = async (req: Request, res: Response) => {
+//   try {
+//     const { email } = req.body;
+
+//     if (!email) {
+//       return res.status(400).json({ message: "Email is required" });
+//     }
+
+//     console.log("Email:", email);
+//     res.json({ message: "Login working" });
+
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 
 
 

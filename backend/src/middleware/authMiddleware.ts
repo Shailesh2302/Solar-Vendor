@@ -7,6 +7,7 @@ export interface AuthRequest extends Request {
     id: string;
     email: string;
     role: string;
+    isApproved: boolean
   };
 }
 
@@ -18,7 +19,7 @@ export const protectRoute = async (req: AuthRequest, res: Response, next: NextFu
     const decoded = verifyAccessToken(token);
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true, role: true },
+      select: { id: true, email: true, role: true, isApproved:true },
     });
 
     if (!user) return res.status(401).json({ message: "User not found" });
