@@ -1,1 +1,0 @@
-{"root":["./src/index.ts","./src/config/prisma.ts","./src/controller/authcontroller.ts","./src/controller/leadcontroller.ts","./src/middleware/authmiddleware.ts","./src/middleware/rolebasedauthcontroller.ts","./src/routes/leadroute.ts","./src/routes/userroute.ts","./src/utils/jwt.ts"],"errors":true,"version":"5.9.3"}
